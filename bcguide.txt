@@ -24,7 +24,14 @@ INP addr "write num to the addres only numers integer",
 PAS "pause the program",
 SETM addr1.addr2.value "for example addr1 = 0 and addr2 = 255 and value = 1, 0 = 1, 1 = 1, 2 = 2, ..., 255 = 1",
 CLRM addr1.addr2 "clear range memory",
-GETM addr1.addr2 "print range memory"
+GETM addr1.addr2 "print range memory",
+JMP line "go to line",
+JZ addr.line "go to line if addr equals zero",
+JNZ addr.line "go to line if addr don't equals zero",
+IFA addr1.addr2.line "go to line if addr1 equals addr2",
+IFNA addr1.addr2.line "go to line if addr1 don't equals addr2",
+IFV addr.value.line "go to line if addr1 equals value",
+IFNV addr.value.line "go to line if addr1 don't equals value",
 HLT "the end",
 
 "place ';' in the end recommended but not required".
