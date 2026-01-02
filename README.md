@@ -1,0 +1,39 @@
+BC Language this's my tiny asm lang and this gide for the lang "for update v0.1.5":
+SET addres"0, ..., 255".value"any only integer",
+GET addr "print memory addres",
+ADD addr1.addr2 "value addr1 + value addr2",
+SUB addr1.addr2 "-",
+MUL addr1.addr2 "*",
+DIV addr1.addr2 "/",
+CLR addr "clear value",
+CLRA "clear all values",
+INC addr "addr += 1",
+DEC addr "-=1",
+MOV addr1.addr2 "copy value from addr1 to addr2",
+SWP addr1.addr2 "for example addr1 = 0 and addr2 = 1 when we use the command be addr1 = 1 and addr2 = 0",
+CMP addr1.addr2 "addr1 == addr1 ? then true else false",
+POW addr1.addr2.addr2 "addr3 = addr1 ^ addr2",
+ABS addr1.addr2 "addr1 = -2 and addr2 = any think number from '0, ..., 255' then addr2 = 2 show instance from zero  to addr1",
+RAND min.max.addr,
+PTR any think "print any think"
+PTRL any think "print any think and next line"
+DUMP "show all values"
+DUMP 10 "show values from addr0 to addr10",
+DUMP 5.10 "show values from addr5 to addr10",
+INP addr "write num to the addres only numers integer",
+PAS "pause the program",
+SETM addr1.addr2.value "for example addr1 = 0 and addr2 = 255 and value = 1, 0 = 1, 1 = 1, 2 = 2, ..., 255 = 1",
+CLRM addr1.addr2 "clear range memory",
+GETM addr1.addr2 "print range memory",
+JMP line "go to line",
+JZ addr.line "go to line if addr equals zero",
+JNZ addr.line "go to line if addr don't equals zero",
+IFA addr1.addr2.line "go to line if addr1 equals addr2",
+IFNA addr1.addr2.line "go to line if addr1 don't equals addr2",
+IFV addr.value.line "go to line if addr1 equals value",
+IFNV addr.value.line "go to line if addr1 don't equals value",
+HLT "the end",
+
+"place ';' in the end recommended but not required".
+
+do command "bcpars -h for see all commands"
