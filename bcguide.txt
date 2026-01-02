@@ -1,6 +1,6 @@
 BC Language this's my tiny asm lang and this gide for the lang "for update v0.1.5":
 SET addres"0, ..., 255".value"any only integer",
-GET addr,
+GET addr "print memory addres",
 ADD addr1.addr2 "value addr1 + value addr2",
 SUB addr1.addr2 "-",
 MUL addr1.addr2 "*",
@@ -23,6 +23,8 @@ DUMP 5.10 "show values from addr5 to addr10",
 INP addr "write num to the addres only numers integer",
 PAS "pause the program",
 SETM addr1.addr2.value "for example addr1 = 0 and addr2 = 255 and value = 1, 0 = 1, 1 = 1, 2 = 2, ..., 255 = 1",
+CLRM addr1.addr2 "clear range memory",
+GETM addr1.addr2 "print range memory"
 HLT "the end",
 
 "place ';' in the end recommended but not required".
