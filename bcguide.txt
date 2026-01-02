@@ -1,4 +1,4 @@
-BC Language this's my tiny asm lang and this gide for the lang:
+BC Language this's my tiny asm lang and this gide for the lang "for update v0.1.5":
 SET addres"0, ..., 255".value"any only integer",
 GET addr,
 ADD addr1.addr2 "value addr1 + value addr2",
@@ -26,3 +26,5 @@ SETM addr1.addr2.value "for example addr1 = 0 and addr2 = 255 and value = 1, 0 =
 HLT "the end",
 
 "place ';' in the end recommended but not required".
+
+do command "bcpars -h for see all commands"
