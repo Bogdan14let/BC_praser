@@ -1,4 +1,4 @@
-BC Language Guide (v0.2.5)
+BC Language Guide (v0.2.5),
 Note: Install MinGW to compile .bc files into .exe Total commands: 61
 
 [Include File]
