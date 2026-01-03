@@ -1,6 +1,6 @@
 BC Language Guide (v0.2.3),
 Install MinGW for Compile .bc file in .exe,
-Total commands: 54
+Total commands: 55
 
 [Integer Operations]
 
