@@ -124,4 +124,4 @@ HLT - the end of the program (terminate execution)
 
 [Include File]
 
-#include file; - import file
+#include file - import file
