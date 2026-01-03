@@ -1,127 +1,87 @@
-BC Language Guide (v0.2.3), 
-Install MinGW for Compile .bc file in .exe, 
-Total commands: 55
+BC Language Guide (v0.2.5)
+Note: Install MinGW to compile .bc files into .exe Total commands: 61
 
 [Include File]
-
-#include "file" - import file
+#include "file" - Import another file (supports nesting and quotes).
 
 [Integer Operations]
+SET addr.value - Set integer (0-1023) to address.
 
-SET addr.value - set integer (0-1023) to address
+GET addr - Print integer value from address.
 
-GET addr - print integer value from address
+ADD/SUB/MUL/DIV addr1.addr2 - Mathematical operations.
 
-ADD addr1.addr2 - add addr1 + addr2
+CLR addr / CLRA - Clear value at address or all integer memory.
 
-SUB addr1.addr2 - subtract addr1 - addr2
+INC addr / DEC addr - Increment (+1) and decrement (-1).
 
-MUL addr1.addr2 - multiply addr1 * addr2
+MOV addr1.addr2 - Copy value from addr1 to addr2.
 
-DIV addr1.addr2 - divide addr1 / addr2
+SWP addr1.addr2 - Swap values between two addresses.
 
-CLR addr - clear value at address
+CMP addr1.addr2 - Compare (print 1 if equal, else 0).
 
-CLRA - clear all integer memory
+POW addr1.addr2.addr3 - Power (addr3 = addr1 ^ addr2).
 
-INC addr - increment (addr += 1)
+ABS addr1.addr2 - Get absolute value of addr1 and save to addr2.
 
-DEC addr - decrement (addr -= 1)
+RAND min.max.addr - Generate random number into address.
 
-MOV addr1.addr2 - copy value from addr1 to addr2
+[File System]
+OPEN "path",R,saddr - Read file content into string memory.
 
-SWP addr1.addr2 - swap values between addr1 and addr2
+OPEN "path",W,"text" - Write text directly to file (quotes are trimmed).
 
-CMP addr1.addr2 - if addr1 == addr2 print 1 else 0
+OPEN "path",WA,saddr - Write string memory data to file.
 
-POW addr1.addr2.addr3 - power (addr3 = addr1 ^ addr2)
+OPEN "path",A,"text" - Append text to the end of a file.
 
-ABS addr1.addr2 - get absolute value of addr1 and save to addr2
-
-RAND min.max.addr - generate random number into address
+FCHK "path",saddr - Check if file exists (saves "true"/"false" to smemory).
 
 [Output & System]
+PRT "text" - Print text to console.
 
-PTR "text" - print text to console
+PRTL "text" - Print text and move to a new line.
 
-PTRL "text" - print text and move to next line
+DUMP - Show all memory (also DUMP addr or DUMP a1.a2).
 
-DUMP - show all values
+INP addr - Input integer from user to address.
 
-DUMP addr - show range from 0 to addr
-
-DUMP addr1.addr2 - show range from addr1 to addr2
-
-INP addr - input integer from user to address
-
-PAS - pause the program
-
-[Memory Management]
-
-SETM addr1.addr2.value - fill range with value
-
-CLRM addr1.addr2 - clear range of memory
-
-GETM addr1.addr2 - print range of memory
+PAS - Pause the program (wait for key press).
 
 [Control Flow & Functions]
+LBL name - Create a label (registered in lbls).
 
-JMP line - jump to specified line
+JMP line/label - Jump to a specific line number or label name.
 
-JZ addr.line - jump if value is zero
+CALL name - Execute function by label.
 
-JNZ addr.line - jump if value is NOT zero
+RET - Return from function.
 
-IFA addr1.addr2.line - jump if addr1 == addr2
+JZ/JNZ addr.target - Jump if value is zero / NOT zero.
 
-IFNA addr1.addr2.line - jump if addr1 != addr2
+IFV/IFNV addr.value.target - Jump if value equals/not equals constant (target = line or label).
 
-IFV addr.value.line - jump if addr value == constant
-
-IFNV addr.value.line - jump if addr value != constant
-
-LBL name - create a function/label point
-
-CALL name - execute function by label
-
-RET - return from function
+IFA/IFNA addr1.addr2.target - Jump if addr1 value equals/not equals addr2 value.
 
 [String Memory Operations]
+SSET saddr.value - Set string value (supports quotes).
 
-SINP saddr - input string from user to s-address
+SGET saddr - Print string value from s-address.
 
-SSET saddr.value - set string value to s-address
+SINP saddr - Input string from user to s-address.
 
-SGET saddr - print string value from s-address
+SCLR/SCLRA - Clear string at s-address or all string memory.
 
-SCLR saddr - clear string at s-address
+SMOV/SSWP - Copy or swap string values.
 
-SCLRA - clear all string memory
+SCMP s1.s2 - Compare two strings (1 if equal, 0 if not).
 
-SMOV saddr1.saddr2 - copy string from saddr1 to saddr2
+SIFV saddr.value.target - Jump if string equals constant.
 
-SSWP saddr1.saddr2 —-swap two string values
+SIFA s1.s2.target - Jump if s-string1 equals s-string2.
 
-SCMP saddr1.saddr2 - if saddr1 == saddr2 print 1 else 0
-
-SDUMP - show all string memory
-
-SSETM saddr1.saddr2.value - fill string range with value
-
-SMOVM saddr1.saddr2.saddr3 - copy string saddr3 to range s1-s2
-
-SCLRM saddr1.saddr2 - clear range of string memory
-
-SGETM saddr1.saddr2 - print range of string memory
-
-SIFV saddr.value.line - jump if string equals constant
-
-SIFA saddr1.saddr2.line - jump if s-string1 equals s-string2
-
-SIFNV saddr.value.line - jump if string NOT equals constant
-
-SIFNA saddr1.saddr2.line - jump if s-string1 NOT equals s-string2
+SIFNV/SIFNA ... - Conditional jumps for "NOT equal".
 
 [Terminal Command]
-
-HLT - the end of the program (terminate execution)
+HLT - End of the program (terminate execution).
