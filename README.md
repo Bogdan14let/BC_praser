@@ -1,5 +1,5 @@
-BC Language Guide (v0.2.2), 
-Install MinGW for Compile .bc file in .exe, 
+BC Language Guide (v0.2.3)
+Install MinGW for Compile .bc file in .exe
 Total commands: 54
 
 [Integer Operations]
@@ -120,5 +120,8 @@ SIFNA saddr1.saddr2.line - jump if s-string1 NOT equals s-string2
 
 [Terminal Command]
 
-
 HLT - the end of the program (terminate execution)
+
+[Include File]
+
+#include - import file
