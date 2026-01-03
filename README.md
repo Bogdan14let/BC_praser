@@ -1,10 +1,10 @@
-BC Language Guide (v0.2.3),
-Install MinGW for Compile .bc file in .exe,
+BC Language Guide (v0.2.3), 
+Install MinGW for Compile .bc file in .exe, 
 Total commands: 55
 
 [Include File]
 
-#include file - import file
+#include "file" - import file
 
 [Integer Operations]
 
@@ -42,9 +42,9 @@ RAND min.max.addr - generate random number into address
 
 [Output & System]
 
-PTR text - print text to console
+PTR "text" - print text to console
 
-PTRL text - print text and move to next line
+PTRL "text" - print text and move to next line
 
 DUMP - show all values
 
