@@ -2,7 +2,7 @@ BC Language Guide (v0.2.5)
 Note: Install MinGW to compile .bc files into .exe Total commands: 61
 
 [Include File]
-#include "file" - Import another file (supports nesting and quotes).
+#include "file" - Import another file ".bc or .bh" (supports nesting and quotes).
 
 [Integer Operations]
 SET addr.value - Set integer (0-1023) to address.
