@@ -34,3 +34,10 @@ CLS - Clear screen.
 DUMP - Show memory.
 PAS - Pause.
 HLT - Terminate.
+
+EXAMPLE:
+
+SET 0.1
+GET 0
+CLS
+CLR 0
