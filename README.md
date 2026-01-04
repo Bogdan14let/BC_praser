@@ -23,7 +23,6 @@ IFA/IFNA addr1.addr2.target - Jump if memory values are equal / not equal.
 
 [File System]
 OPEN "path",mode,data - Modes: R (read), W (write), WA (write addr), A (append).
-FCHK "path",saddr - Check file existence.
 
 [String Operations]
 SSET/SGET/SINP/SCLR/SCLRA/SMOV/SSWP/SCMP/SSETM/SIFV/SIFA/SIFNV/SIFNA.
@@ -33,5 +32,11 @@ PRT/PRTL "text" - Output.
 CLS - Clear screen.
 DUMP - Show memory.
 PAS - Pause.
-
 HLT - Terminate.
+
+EXAMPLE:
+
+SET 0.1
+GET 0
+CLS
+CLR 0
