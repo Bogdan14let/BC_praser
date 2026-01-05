@@ -4,7 +4,7 @@ Note: Install MinGW to compile .bc files into .exe. Total commands: 69
 [Include File]
 #include "file" - Import another file (supports nesting).
 
-[Integer Operations]
+[Float Operations]
 SET/GET/ADD/SUB/MUL/DIV/CLR/CLRA/INC/DEC/MOV/SWP/CMP/POW/ABS/RAND - Standard math and memory operations.
 
 [Logic & Comparisons (v0.2.8)]
