@@ -35,7 +35,7 @@ PAS - Pause.
 HLT - Terminate.
 
 [Comment]
-: Any comment
+: Any comment :
 
 EXAMPLE:
 
