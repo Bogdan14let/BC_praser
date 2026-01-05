@@ -7,7 +7,7 @@ Note: Install MinGW to compile .bc files into .exe. Total commands: 69
 [Integer Operations]
 SET/GET/ADD/SUB/MUL/DIV/CLR/CLRA/INC/DEC/MOV/SWP/CMP/POW/ABS/RAND - Standard math and memory operations.
 
-[Logic & Comparisons (v0.2.6)]
+[Logic & Comparisons (v0.2.8)]
 IFLV/IFBV target - Jump if memory[addr] is Less (<) or Bigger (>) than value.
 IFLEV/IFBEV target - Jump if memory[addr] is Less or Equal (<=) or Bigger or Equal (>=) than value.
 IFLA/IFBA target - Jump if memory[addr1] < or > memory[addr2].
@@ -33,6 +33,9 @@ CLS - Clear screen.
 DUMP - Show memory.
 PAS - Pause.
 HLT - Terminate.
+
+[Comment]
+: Any comment
 
 EXAMPLE:
 
