@@ -1,11 +1,12 @@
-BC Language Guide (v0.2.8), 
-Note: Install MinGW to compile .bc files into .exe. Total commands: 69
+BC Language Guide (v0.2.9), 
+Note: Install MinGW to compile .bc files into .exe. Total commands: 77
 
 [Include File]
 #include "file" - Import another file (supports nesting).
 
 [Float Operations]
 SET/GET/ADD/SUB/MUL/DIV/CLR/CLRA/INC/DEC/MOV/SWP/CMP/POW/ABS/RAND - Standard math and memory operations.
+SETM/MOVM/CLRM/GETM - Range operations for multiple addresses.
 
 [Logic & Comparisons (v0.2.8)]
 IFLV/IFBV target - Jump if memory[addr] is Less (<) or Bigger (>) than value.
@@ -25,21 +26,37 @@ IFA/IFNA addr1.addr2.target - Jump if memory values are equal / not equal.
 OPEN "path",mode,data - Modes: R (read), W (write), WA (write addr), A (append).
 
 [String Operations]
-SSET/SGET/SINP/SCLR/SCLRA/SMOV/SSWP/SCMP/SSETM/SIFV/SIFA/SIFNV/SIFNA.
+SSET/SGET/SINP/SCLR/SCLRA/SMOV/SSWP/SCMP/SSETM/SMOVM/SCLRM/SGETM/SDUMP - String memory operations.
+SIFV/SIFA/SIFNV/SIFNA - String comparison jumps.
 
-[System]
-PRT/PRTL "text" - Output.
+[Type Conversion (v0.2.9)]
+CHR code_addr.str_addr - Convert ASCII code to character.
+STF str_addr.float_addr - Convert string to float.
+FTS str_addr.float_addr - Convert float to string.
+
+[System & I/O (v0.2.9)]
+PRT/PRTL "text" - Output without/with newline.
+ENDL - Print empty line.
+GK addr - Get key press (ASCII code).
+SYS "command" - Execute system command.
+SLP addr - Sleep for milliseconds (value from memory).
+GT millis_addr.time_str_addr - Get current time (ms + HH:mm:ss format).
 CLS - Clear screen.
-DUMP - Show memory.
-PAS - Pause.
-HLT - Terminate.
+DUMP/SDUMP - Show memory contents.
+INP addr - Input float value.
+PAS - Pause execution.
+HLT - Terminate program.
 
 [Comment]
 : Any comment :
 
 EXAMPLE:
-
 SET 0.1
 GET 0
+ENDL
+PRTL "Hello World"
+GK 1
+CHR 1.0
+SGET 0
 CLS
-CLR 0
+HLT
