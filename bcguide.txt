@@ -1,11 +1,12 @@
-╔════════════════════════════════════════════════════════════════════════════╗
-║                    BC LANGUAGE - COMPLETE GUIDE (v0.3.0)                                                ║
-╚════════════════════════════════════════════════════════════════════════════╝
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                    BC LANGUAGE - COMPLETE GUIDE (v0.3.1)                                              ║
+╚═══════════════════════════════════════════════════════════════════════════╝
 
 REQUIREMENTS:
 - Install MinGW (g++ compiler) to compile .bc files into .exe
 - Total commands: 77
 - Memory: 1024 float cells (0-1023) + 1024 string cells (0-1023)
+- Named variables support: unlimited float/string variables with names
 
 ═══════════════════════════════════════════════════════════════════════════
 [1] INCLUDE FILES
@@ -18,94 +19,159 @@ REQUIREMENTS:
     #include "utils.bc"
 
 ═══════════════════════════════════════════════════════════════════════════
-[2] FLOAT MEMORY OPERATIONS
+[2] VARIABLES - NEW FEATURE! 🎉
 ═══════════════════════════════════════════════════════════════════════════
 
-SET addr.value
-  - Set float value to memory address
-  - Example: SET 0.42.5  (memory[0] = 42.5)
+BC Language now supports NAMED VARIABLES in addition to numbered addresses!
 
-GET addr
-  - Print value from memory address
-  - Example: GET 0  (prints memory[0])
+You can use either:
+  - Numbered addresses: 0, 1, 2, ..., 1023
+  - Named variables: myVar, counter, userName, etc.
 
-INP addr
-  - Get float input from user
-  - Example: INP 5  (user types number → memory[5])
+Named variables automatically:
+  - Become LOCAL inside functions (after LBL)
+  - Become GLOBAL in main code (before any LBL)
+  - Are isolated between function calls
 
-CLR addr
-  - Clear memory address (set to 0)
-  - Example: CLR 10
+Examples:
+  SET counter.0          : named variable 'counter' = 0
+  SET 0.42               : address 0 = 42 (old style still works)
+  INC counter            : counter++
+  GET counter            : print counter value
+  
+  SSET userName.Alice    : string variable 'userName' = "Alice"
+  SGET userName          : print "Alice"
+
+Variable Scope Rules:
+  - Variables created in MAIN code → GLOBAL (accessible everywhere)
+  - Variables created in FUNCTIONS → LOCAL (only in that function)
+  - Function parameters are always LOCAL
+  - Numbered addresses (0-1023) are GLOBAL everywhere
+
+═══════════════════════════════════════════════════════════════════════════
+[3] FLOAT MEMORY OPERATIONS (Works with BOTH addresses and names)
+═══════════════════════════════════════════════════════════════════════════
+
+SET target.value
+  - Set float value to memory address OR variable name
+  - Example: 
+    SET 0.42.5           : memory[0] = 42.5
+    SET counter.100      : counter = 100
+    SET myVar.3.14       : myVar = 3.14
+
+GET target
+  - Print value from memory address OR variable
+  - Example: 
+    GET 0                : print memory[0]
+    GET counter          : print counter variable
+
+INP target
+  - Get float input from user into address OR variable
+  - Example: 
+    INP 5                : user types → memory[5]
+    INP userAge          : user types → userAge variable
+
+CLR target
+  - Clear memory address OR variable (set to 0)
+  - Example: 
+    CLR 10               : memory[10] = 0
+    CLR counter          : counter = 0
 
 CLRA
-  - Clear ALL memory addresses (0-1023)
+  - Clear ALL memory addresses AND variables
   - Example: CLRA
 
-INC addr
-  - Increment value by 1
-  - Example: INC 0  (memory[0]++)
+INC target
+  - Increment address OR variable by 1
+  - Example: 
+    INC 0                : memory[0]++
+    INC counter          : counter++
 
-DEC addr
-  - Decrement value by 1
-  - Example: DEC 0  (memory[0]--)
+DEC target
+  - Decrement address OR variable by 1
+  - Example: 
+    DEC 0                : memory[0]--
+    DEC lives            : lives--
 
 MOV src.dest
-  - Copy value from src to dest
-  - Example: MOV 0.1  (memory[1] = memory[0])
+  - Copy value from src to dest (both can be addresses or names)
+  - Example: 
+    MOV 0.1              : memory[1] = memory[0]
+    MOV counter.backup   : backup = counter
+    MOV score.0          : memory[0] = score
 
-SWP addr1.addr2
-  - Swap two memory values
-  - Example: SWP 0.1  (swap memory[0] ↔ memory[1])
+SWP target1.target2
+  - Swap two memory values (addresses or names)
+  - Example: 
+    SWP 0.1              : swap memory[0] ↔ memory[1]
+    SWP x.y              : swap x ↔ y
 
-CMP addr1.addr2
-  - Compare two addresses, prints 1 if equal, 0 if not
-  - Example: CMP 0.1
+CMP target1.target2
+  - Compare two values, prints 1 if equal, 0 if not
+  - Example: 
+    CMP 0.1              : compare addresses
+    CMP score.highScore  : compare variables
 
 DUMP [start[.end]]
-  - Print memory contents
-  - DUMP - prints all (0-1023)
-  - DUMP 10 - prints from address 10 to end (10-1023)
+  - Print memory contents AND variable values
+  - DUMP - prints all (0-1023) + global vars + local vars
+  - DUMP 10 - prints from address 10 to end
   - DUMP 0.10 - prints range (0-10)
   - Example: 
-    DUMP       : shows all memory
-    DUMP 5     : shows memory[5] to memory[1023]
-    DUMP 0.5   : shows memory[0] to memory[5]
+    DUMP       : shows all memory + all variables
+    DUMP 5     : shows memory[5-1023]
+    DUMP 0.5   : shows memory[0-5]
 
 ═══════════════════════════════════════════════════════════════════════════
-[3] MATHEMATICAL OPERATIONS
+[4] MATHEMATICAL OPERATIONS (Works with addresses AND variables)
 ═══════════════════════════════════════════════════════════════════════════
 
-ADD addr1.addr2.result
-  - result = addr1 + addr2
-  - Example: ADD 0.1.2  (memory[2] = memory[0] + memory[1])
+ADD target1.target2.result
+  - result = target1 + target2 (any can be address or variable)
+  - Example: 
+    ADD 0.1.2            : memory[2] = memory[0] + memory[1]
+    ADD score.bonus.total : total = score + bonus
+    ADD x.5.result       : result = x + memory[5]
 
-SUB addr1.addr2.result
-  - result = addr1 - addr2
-  - Example: SUB 5.3.7
+SUB target1.target2.result
+  - result = target1 - target2
+  - Example: 
+    SUB 5.3.7            : memory[7] = memory[5] - memory[3]
+    SUB health.damage.newHealth : newHealth = health - damage
 
-MUL addr1.addr2.result
-  - result = addr1 * addr2
-  - Example: MUL 0.1.2
+MUL target1.target2.result
+  - result = target1 * target2
+  - Example: 
+    MUL 0.1.2            : memory[2] = memory[0] * memory[1]
+    MUL price.quantity.total : total = price * quantity
 
-DIV addr1.addr2.result
-  - result = addr1 / addr2
-  - Division by zero is ignored (result unchanged)
-  - Example: DIV 10.2.5
+DIV target1.target2.result
+  - result = target1 / target2
+  - Division by zero returns 0
+  - Example: 
+    DIV 10.2.5           : memory[5] = memory[10] / memory[2]
+    DIV total.count.average : average = total / count
 
 POW base.exponent.result
   - result = base ^ exponent
-  - Example: POW 2.3.0  (memory[0] = 2^3 = 8)
+  - Example: 
+    POW 2.3.0            : memory[0] = 2^3 = 8
+    POW base.exp.power   : power = base^exp
 
-ABS addr.result
-  - result = absolute value of addr
-  - Example: ABS 5.6
+ABS target.result
+  - result = absolute value of target
+  - Example: 
+    ABS 5.6              : memory[6] = abs(memory[5])
+    ABS temperature.absTemp : absTemp = abs(temperature)
 
 RAND min.max.result
   - Generate random integer between min and max
-  - Example: RAND 1.100.0  (memory[0] = random 1-100)
+  - Example: 
+    RAND 1.100.0         : memory[0] = random 1-100
+    RAND 1.6.diceRoll    : diceRoll = random 1-6
 
 ═══════════════════════════════════════════════════════════════════════════
-[4] RANGE OPERATIONS
+[5] RANGE OPERATIONS (Only for numbered addresses 0-1023)
 ═══════════════════════════════════════════════════════════════════════════
 
 SETM start.end.value
@@ -125,7 +191,7 @@ GETM start.end
   - Example: GETM 0.5
 
 ═══════════════════════════════════════════════════════════════════════════
-[5] CONTROL FLOW & JUMPS
+[6] CONTROL FLOW & JUMPS
 ═══════════════════════════════════════════════════════════════════════════
 
 JMP line
@@ -133,161 +199,214 @@ JMP line
   - Cannot jump to labels, only to line numbers
   - Example: JMP 10
 
-JZ addr.line
-  - Jump to LINE NUMBER if memory[addr] == 0
-  - Example: JZ 0.25
+JZ target.line
+  - Jump to LINE NUMBER if target == 0 (address or variable)
+  - Example: 
+    JZ 0.25              : jump to line 25 if memory[0] == 0
+    JZ counter.30        : jump to line 30 if counter == 0
 
-JNZ addr.line
-  - Jump to LINE NUMBER if memory[addr] != 0
-  - Example: JNZ 5.30
+JNZ target.line
+  - Jump to LINE NUMBER if target != 0
+  - Example: 
+    JNZ 5.30             : jump if memory[5] != 0
+    JNZ lives.10         : jump if lives != 0
 
 IMPORTANT: JMP, JZ, JNZ can ONLY jump to line numbers, NOT to labels!
 
 ═══════════════════════════════════════════════════════════════════════════
-[6] CONDITIONAL JUMPS - VALUE COMPARISON
+[7] CONDITIONAL JUMPS - VALUE COMPARISON (Works with variables!)
 ═══════════════════════════════════════════════════════════════════════════
 
-IFV addr.value.target
-  - Jump to LINE NUMBER or LABEL if memory[addr] == value
+IFV target.value.destination
+  - Jump to LINE NUMBER or LABEL if target == value
   - Example: 
-    IFV 0.42.10      : jump to line 10
-    IFV 0.42.success : jump to label "success"
+    IFV 0.42.10          : jump to line 10
+    IFV score.100.win    : jump to label "win"
+    IFV choice.1.option1 : jump if choice == 1
 
-IFNV addr.value.target
-  - Jump to LINE NUMBER or LABEL if memory[addr] != value
-  - Example: IFNV 0.0.not_zero
+IFNV target.value.destination
+  - Jump if target != value
+  - Example: IFNV lives.0.alive
 
-IFLV addr.value.target
-  - Jump to LINE NUMBER or LABEL if memory[addr] < value
-  - Example: IFLV 0.10.less_than_ten
+IFLV target.value.destination
+  - Jump if target < value
+  - Example: IFLV age.18.minor
 
-IFBV addr.value.target
-  - Jump to LINE NUMBER or LABEL if memory[addr] > value
-  - Example: IFBV 0.100.greater
+IFBV target.value.destination
+  - Jump if target > value
+  - Example: IFBV score.100.highScore
 
-IFLEV addr.value.target
-  - Jump to LINE NUMBER or LABEL if memory[addr] <= value
-  - Example: IFLEV 0.50.check
+IFLEV target.value.destination
+  - Jump if target <= value
+  - Example: IFLEV health.20.danger
 
-IFBEV addr.value.target
-  - Jump to LINE NUMBER or LABEL if memory[addr] >= value
-  - Example: IFBEV 0.18.adult
-
-═══════════════════════════════════════════════════════════════════════════
-[7] CONDITIONAL JUMPS - ADDRESS COMPARISON
-═══════════════════════════════════════════════════════════════════════════
-
-IFA addr1.addr2.target
-  - Jump to LINE NUMBER or LABEL if memory[addr1] == memory[addr2]
-  - Example: IFA 0.1.equal
-
-IFNA addr1.addr2.target
-  - Jump to LINE NUMBER or LABEL if memory[addr1] != memory[addr2]
-  - Example: IFNA 0.1.not_equal
-
-IFLA addr1.addr2.target
-  - Jump to LINE NUMBER or LABEL if memory[addr1] < memory[addr2]
-  - Example: IFLA 5.10.first_smaller
-
-IFBA addr1.addr2.target
-  - Jump to LINE NUMBER or LABEL if memory[addr1] > memory[addr2]
-  - Example: IFBA 20.10.first_bigger
-
-IFLEA addr1.addr2.target
-  - Jump to LINE NUMBER or LABEL if memory[addr1] <= memory[addr2]
-  - Example: IFLEA 0.100.within_range
-
-IFBEA addr1.addr2.target
-  - Jump to LINE NUMBER or LABEL if memory[addr1] >= memory[addr2]
-  - Example: IFBEA 18.0.valid
+IFBEV target.value.destination
+  - Jump if target >= value
+  - Example: IFBEV level.10.expert
 
 ═══════════════════════════════════════════════════════════════════════════
-[8] FUNCTIONS
+[8] CONDITIONAL JUMPS - COMPARING TWO TARGETS (Variables supported!)
+═══════════════════════════════════════════════════════════════════════════
+
+IFA target1.target2.destination
+  - Jump if target1 == target2
+  - Example: 
+    IFA 0.1.equal        : compare addresses
+    IFA userPass.correctPass.login : compare variables
+
+IFNA target1.target2.destination
+  - Jump if target1 != target2
+  - Example: IFNA player1.player2.different
+
+IFLA target1.target2.destination
+  - Jump if target1 < target2
+  - Example: IFLA score.highScore.notBest
+
+IFBA target1.target2.destination
+  - Jump if target1 > target2
+  - Example: IFBA score.highScore.newRecord
+
+IFLEA target1.target2.destination
+  - Jump if target1 <= target2
+  - Example: IFLEA health.maxHealth.safe
+
+IFBEA target1.target2.destination
+  - Jump if target1 >= target2
+  - Example: IFBEA level.requiredLevel.unlocked
+
+═══════════════════════════════════════════════════════════════════════════
+[9] FUNCTIONS - NOW WITH PARAMETERS! 🚀
 ═══════════════════════════════════════════════════════════════════════════
 
 LBL name
-  - Create a label (function entry point)
+LBL name(type param1, type param2, ...)
+  - Create a function (label)
+  - Can have parameters: fl (float) or str (string)
+  - Parameters become LOCAL variables inside function
   - MUST always end with RET
-  - Example:
-    LBL main
-        PRTL "Hello"
-    RET
+
+Examples:
+  : Simple function without parameters
+  LBL greet
+      PRTL "Hello!"
+  RET
+
+  : Function with float parameters
+  LBL add(fl a, fl b)
+      ADD a.b.result
+      GET result
+  RET
+
+  : Function with mixed parameters
+  LBL displayScore(str name, fl score)
+      PRT "Player: "
+      SGET name
+      PRT " Score: "
+      GET score
+      ENDL
+  RET
 
 CALL label
-  - Call function by LABEL NAME (pushes return address to stack)
-  - Can ONLY call labels, NOT line numbers
-  - Example: CALL print_hello
+CALL label(arg1, arg2, ...)
+  - Call function by LABEL NAME
+  - Pass arguments if function has parameters
+  - Arguments can be addresses, variables, or literals
+
+Examples:
+  : Call without arguments
+  CALL greet
+
+  : Call with arguments
+  SET score.100
+  CALL add(50, score)          : passes 50 and score value
+  
+  SSET playerName.Alice
+  CALL displayScore(playerName, score)
 
 RET
-  - Return from function (pops return address from stack)
+  - Return from function
+  - Automatically clears LOCAL variables
   - MUST be at end of EVERY LBL block
-  - Example:
-    LBL my_function
-        PRTL "Inside function"
-    RET
 
 IMPORTANT RULES:
-  - Functions MUST be called with CALL, NOT JMP
-  - Every LBL MUST end with RET
-  - CALL works only with label names
-  - JMP works only with line numbers
+  - Functions create ISOLATED scope for local variables
+  - Parameters are always LOCAL to the function
+  - Global variables can be accessed from functions
+  - Each function call gets fresh local variables
 
 Full Example:
-  CALL greet
+  : Main code
+  SET x.10
+  SET y.20
+  CALL sum(x, y)
   HLT
   
-  LBL greet
-      PRTL "Hello, World!"
+  : Function adds two numbers
+  LBL sum(fl a, fl b)
+      ADD a.b.result     : result is LOCAL
+      PRT "Sum = "
+      GET result
+      ENDL
   RET
 
 ═══════════════════════════════════════════════════════════════════════════
-[9] STRING OPERATIONS
+[10] STRING OPERATIONS (Works with addresses AND variables!)
 ═══════════════════════════════════════════════════════════════════════════
 
-SSET addr.text
-  - Set string value at address
-  - Example: SSET 0.Hello World
+SSET target.text
+  - Set string value (address or variable)
+  - Example: 
+    SSET 0.Hello World   : string[0] = "Hello World"
+    SSET userName.Bob    : userName = "Bob"
 
-SGET addr
-  - Print string from address
-  - Example: SGET 0
+SGET target
+  - Print string
+  - Example: 
+    SGET 0               : print string[0]
+    SGET userName        : print userName
 
-SINP addr
+SINP target
   - Get string input from user
-  - Example: SINP 1
+  - Example: 
+    SINP 1               : input → string[1]
+    SINP userName        : input → userName
 
-SCLR addr
-  - Clear string at address
-  - Example: SCLR 0
+SCLR target
+  - Clear string
+  - Example: 
+    SCLR 0               : string[0] = ""
+    SCLR message         : message = ""
 
 SCLRA
-  - Clear all string memory
+  - Clear all string memory AND string variables
   - Example: SCLRA
 
 SMOV src.dest
   - Copy string from src to dest
-  - Example: SMOV 0.1
+  - Example: 
+    SMOV 0.1             : string[1] = string[0]
+    SMOV name.backup     : backup = name
 
-SSWP addr1.addr2
+SSWP target1.target2
   - Swap two strings
-  - Example: SSWP 0.1
+  - Example: 
+    SSWP 0.1             : swap strings
+    SSWP firstName.lastName : swap variables
 
-SCMP addr1.addr2
+SCMP target1.target2
   - Compare strings, prints 1 if equal, 0 if not
-  - Example: SCMP 0.1
+  - Example: 
+    SCMP 0.1
+    SCMP userInput.correctAnswer
 
 SDUMP [start[.end]]
-  - Print string memory contents
-  - SDUMP - prints all (0-1023)
-  - SDUMP 10 - prints from address 10 to end (10-1023)
+  - Print string memory + string variables
+  - SDUMP - prints all (0-1023) + global + local string vars
+  - SDUMP 10 - prints from address 10 to end
   - SDUMP 0.10 - prints range (0-10)
-  - Example:
-    SDUMP      : shows all string memory
-    SDUMP 5    : shows string[5] to string[1023]
-    SDUMP 0.5  : shows string[0] to string[5]
 
 ═══════════════════════════════════════════════════════════════════════════
-[10] STRING RANGE OPERATIONS
+[11] STRING RANGE OPERATIONS (Only for numbered addresses)
 ═══════════════════════════════════════════════════════════════════════════
 
 SSETM start.end.text
@@ -307,53 +426,57 @@ SGETM start.end
   - Example: SGETM 0.5
 
 ═══════════════════════════════════════════════════════════════════════════
-[11] STRING CONDITIONAL JUMPS
+[12] STRING CONDITIONAL JUMPS (Works with variables!)
 ═══════════════════════════════════════════════════════════════════════════
 
-SIFV addr.value.target
-  - Jump to LINE NUMBER or LABEL if string[addr] == "value"
-  - Example: SIFV 0.yes.confirmed
+SIFV target.value.destination
+  - Jump if string target == "value"
+  - Example: 
+    SIFV 0.yes.confirmed
+    SIFV answer.quit.exit
 
-SIFNV addr.value.target
-  - Jump to LINE NUMBER or LABEL if string[addr] != "value"
-  - Example: SIFNV 0.exit.continue
+SIFNV target.value.destination
+  - Jump if string target != "value"
+  - Example: SIFNV command.exit.continue
 
-SIFA addr1.addr2.target
-  - Jump to LINE NUMBER or LABEL if string[addr1] == string[addr2]
-  - Example: SIFA 0.1.match
+SIFA target1.target2.destination
+  - Jump if string target1 == string target2
+  - Example: 
+    SIFA 0.1.match
+    SIFA password.correctPass.login
 
-SIFNA addr1.addr2.target
-  - Jump to LINE NUMBER or LABEL if string[addr1] != string[addr2]
-  - Example: SIFNA 0.1.different
+SIFNA target1.target2.destination
+  - Jump if string target1 != string target2
+  - Example: SIFNA input.expected.retry
 
 ═══════════════════════════════════════════════════════════════════════════
-[12] TYPE CONVERSION
+[13] TYPE CONVERSION (Works with variables!)
 ═══════════════════════════════════════════════════════════════════════════
 
-CHR code_addr.str_addr
+CHR code_target.str_target
   - Convert ASCII code to character
   - Example:
-    SET 0.65           : ASCII code for 'A'
-    CHR 0.1            : string[1] = "A"
-    SGET 1             : prints "A"
+    SET code.65          : ASCII 'A'
+    CHR code.letter      : letter = "A"
+    SGET letter          : prints "A"
 
-STF str_addr.float_addr
+STF str_target.float_target
   - Convert string to float
-  - If conversion fails, result = 0
+  - Returns 0 if conversion fails
   - Example:
-    SSET 0.123.45
-    STF 0.1            : memory[1] = 123.45
-    GET 1              : prints 123.45
+    SSET input.123.45
+    STF input.number     : number = 123.45
+    GET number
 
-FTS str_addr.float_addr
+FTS float_target.str_target
   - Convert float to string
   - Example:
-    SET 0.42.5
-    FTS 1.0            : string[1] = "42.5"
-    SGET 1             : prints "42.5"
+    SET value.42.5
+    FTS value.text       : text = "42.5"
+    SGET text
 
 ═══════════════════════════════════════════════════════════════════════════
-[13] OUTPUT
+[14] OUTPUT
 ═══════════════════════════════════════════════════════════════════════════
 
 PRT "text"
@@ -369,362 +492,231 @@ ENDL
   - Example: ENDL
 
 ═══════════════════════════════════════════════════════════════════════════
-[14] KEYBOARD INPUT
+[15] KEYBOARD INPUT (Works with variables!)
 ═══════════════════════════════════════════════════════════════════════════
 
-GK addr
+GK target
   - Get single key press (no echo)
-  - Stores ASCII code in memory[addr]
+  - Stores ASCII code in target
   - Example:
-    PRTL "Press any key..."
-    GK 0               : waits for key press
-    GET 0              : shows ASCII code
-    CHR 0.1            : convert to character
-    SGET 1             : display character
+    GK keyCode           : wait for key
+    GET keyCode          : show ASCII
+    CHR keyCode.keyChar  : convert to char
+    SGET keyChar         : display char
 
 ═══════════════════════════════════════════════════════════════════════════
-[15] FILE OPERATIONS
+[16] FILE OPERATIONS (Works with variables!)
 ═══════════════════════════════════════════════════════════════════════════
 
-OPEN "path",mode,data
+OPEN "path",mode,target
 
 Modes:
-  R   - Read file into string memory
-        OPEN "data.txt",R,0  (reads into string[0])
+  R   - Read file into string
+        OPEN "data.txt",R,fileContent
   
   W   - Write literal text to file
         OPEN "out.txt",W,Hello World
   
-  WA  - Write from string address to file
-        OPEN "out.txt",WA,0  (writes string[0] to file)
+  WA  - Write from string target to file
+        OPEN "out.txt",WA,fileContent
   
   A   - Append literal text to file
         OPEN "log.txt",A,New entry
 
 Examples:
   : Read file
-  OPEN "config.txt",R,5
-  SGET 5
+  OPEN "config.txt",R,config
+  SGET config
   
-  : Write to file
-  SSET 0.Important data
-  OPEN "save.txt",WA,0
-  
-  : Append log
-  OPEN "log.txt",A,Program started
+  : Write variable to file
+  SSET data.Important info
+  OPEN "save.txt",WA,data
 
 ═══════════════════════════════════════════════════════════════════════════
-[16] SYSTEM COMMANDS
+[17] SYSTEM COMMANDS
 ═══════════════════════════════════════════════════════════════════════════
 
 CLS
   - Clear console screen
-  - Example: CLS
 
 SYS "command"
   - Execute system command
-  - Windows: SYS "dir"
-  - Linux: SYS "ls"
-  - Example:
-    SYS "echo Hello"
-    SYS "mkdir test"
-    SYS "notepad.exe"
+  - Example: SYS "dir"
 
 PAS
   - Pause and wait for key press
-  - Example: PAS
 
 HLT
   - Terminate program immediately
-  - Example: HLT
 
 ═══════════════════════════════════════════════════════════════════════════
-[17] TIME & DELAY
+[18] TIME & DELAY (Works with variables!)
 ═══════════════════════════════════════════════════════════════════════════
 
-SLP addr
-  - Sleep for milliseconds (value from memory[addr])
+SLP target
+  - Sleep for milliseconds (from target)
   - Example:
-    SET 0.1000         : 1000 ms = 1 second
-    SLP 0              : wait 1 second
+    SET delay.1000       : 1 second
+    SLP delay
 
-GT millis_addr.time_str_addr
+GT millis_target.time_str_target
   - Get current time
-  - memory[millis_addr] = milliseconds since epoch
-  - string[time_str_addr] = "HH:MM:SS" format
+  - millis_target = milliseconds since epoch
+  - time_str_target = "HH:MM:SS"
   - Example:
-    GT 0.1
-    GET 0              : prints timestamp
-    SGET 1             : prints "14:30:45"
+    GT timestamp.timeString
+    GET timestamp
+    SGET timeString
 
 ═══════════════════════════════════════════════════════════════════════════
-[18] COMMENTS
+[19] COMMENTS
 ═══════════════════════════════════════════════════════════════════════════
 
 : comment text :
   - Single or multi-line comments
   - Example:
     : This is a comment :
-    SET 0.10 : set value : GET 0
+    SET counter.10 : initialize : GET counter
 
 ═══════════════════════════════════════════════════════════════════════════
-[19] COMPLETE EXAMPLES
+[20] NEW EXAMPLES WITH VARIABLES & FUNCTIONS
 ═══════════════════════════════════════════════════════════════════════════
 
 ─────────────────────────────────────────────────────────────────────────
-EXAMPLE 1: Hello World
+EXAMPLE 1: Variables Demo
 ─────────────────────────────────────────────────────────────────────────
-PRTL "Hello, World!"
+SET counter.0
+SET max.10
+
+LBL loop
+    GET counter
+    ENDL
+    INC counter
+    IFLA counter.max.loop
+RET
+
+─────────────────────────────────────────────────────────────────────────
+EXAMPLE 2: Function with Parameters
+─────────────────────────────────────────────────────────────────────────
+CALL greet(Alice, 25)
+CALL greet(Bob, 30)
 HLT
 
+LBL greet(str name, fl age)
+    PRT "Hello, "
+    SGET name
+    PRT "! You are "
+    GET age
+    PRTL " years old."
+RET
+
 ─────────────────────────────────────────────────────────────────────────
-EXAMPLE 2: Simple Calculator
+EXAMPLE 3: Calculator with Named Variables
 ─────────────────────────────────────────────────────────────────────────
 PRTL "Enter first number:"
-INP 0
+INP num1
 PRTL "Enter second number:"
-INP 1
-ADD 0.1.2
-PRT "Result: "
-GET 2
-HLT
+INP num2
 
-─────────────────────────────────────────────────────────────────────────
-EXAMPLE 3: Loop Example (Count to 10) - Using Line Numbers
-─────────────────────────────────────────────────────────────────────────
-SET 0.0
-GET 0
+ADD num1.num2.sum
+SUB num1.num2.diff
+MUL num1.num2.prod
+DIV num1.num2.quot
+
+PRT "Sum: "
+GET sum
 ENDL
-INC 0
-IFLV 0.10.2
+PRT "Difference: "
+GET diff
+ENDL
+PRT "Product: "
+GET prod
+ENDL
+PRT "Quotient: "
+GET quot
+ENDL
 HLT
 
 ─────────────────────────────────────────────────────────────────────────
-EXAMPLE 4: Loop Example (Count to 10) - Using Labels
+EXAMPLE 4: Local vs Global Variables
 ─────────────────────────────────────────────────────────────────────────
-SET 0.0
-LBL loop
-    GET 0
+: Global variable
+SET globalVar.100
+
+CALL testScope
+GET globalVar      : still 100 (global)
+HLT
+
+LBL testScope
+    : Local variable
+    SET localVar.50
+    GET localVar   : prints 50
+    GET globalVar  : prints 100 (can access global)
+RET
+
+─────────────────────────────────────────────────────────────────────────
+EXAMPLE 5: Recursive Function (Countdown)
+─────────────────────────────────────────────────────────────────────────
+CALL countdown(10)
+HLT
+
+LBL countdown(fl n)
+    IFLEV n.0.done
+    GET n
     ENDL
-    INC 0
-    IFLV 0.10.loop
+    SUB n.1.next
+    CALL countdown(next)
+    LBL done
 RET
 
 ─────────────────────────────────────────────────────────────────────────
-EXAMPLE 5: Function Call (CORRECT WAY)
+EXAMPLE 6: String Variables in Functions
 ─────────────────────────────────────────────────────────────────────────
-CALL greet
-CALL greet
+SSET message.Hello World
+CALL printTwice(message)
 HLT
 
-LBL greet
-    PRTL "Hello from function!"
-RET
-
-─────────────────────────────────────────────────────────────────────────
-EXAMPLE 6: Menu System - Using CALL for Functions
-─────────────────────────────────────────────────────────────────────────
-CALL menu
-HLT
-
-LBL menu
-    CLS
-    PRTL "1. Start"
-    PRTL "2. Exit"
-    PRT "Choice: "
-    INP 0
-    IFV 0.1.start
-    IFV 0.2.exit
-    CALL menu
-RET
-
-LBL start
-    PRTL "Starting..."
-    SET 0.1000
-    SLP 0
-    CALL menu
-RET
-
-LBL exit
-    PRTL "Goodbye!"
-RET
-
-─────────────────────────────────────────────────────────────────────────
-EXAMPLE 7: Key Press Detection
-─────────────────────────────────────────────────────────────────────────
-CALL main
-HLT
-
-LBL main
-    PRTL "Press ESC to exit"
-    CALL wait_key
-RET
-
-LBL wait_key
-    GK 0
-    CHR 0.1
-    PRT "You pressed: "
-    SGET 1
+LBL printTwice(str text)
+    SGET text
     ENDL
-    IFNV 0.27.wait_key  : 27 = ESC key
-    PRTL "Exiting..."
+    SGET text
+    ENDL
 RET
-
-─────────────────────────────────────────────────────────────────────────
-EXAMPLE 8: File Logger
-─────────────────────────────────────────────────────────────────────────
-GT 0.1
-SSET 2.Log entry: 
-OPEN "log.txt",A,Log entry: 
-OPEN "log.txt",WA,1
-OPEN "log.txt",A,\n
-PRTL "Log saved!"
-HLT
-
-─────────────────────────────────────────────────────────────────────────
-EXAMPLE 9: Random Number Game - Using CALL
-─────────────────────────────────────────────────────────────────────────
-CALL main
-HLT
-
-LBL main
-    RAND 1.10.0
-    PRTL "Guess number (1-10):"
-    CALL guess_loop
-RET
-
-LBL guess_loop
-    INP 1
-    IFA 0.1.win
-    IFLA 1.0.too_low
-    PRTL "Too high! Try again:"
-    CALL guess_loop
-RET
-
-LBL too_low
-    PRTL "Too low! Try again:"
-    CALL guess_loop
-RET
-
-LBL win
-    PRTL "You win!"
-RET
-
-─────────────────────────────────────────────────────────────────────────
-EXAMPLE 10: Memory Dump Test
-─────────────────────────────────────────────────────────────────────────
-: Fill some memory
-SETM 0.5.100
-SET 10.999
-SET 20.777
-
-PRTL "Full dump:"
-DUMP
-
-PRTL "From address 10 onwards:"
-DUMP 10
-
-PRTL "Range 0-20:"
-DUMP 0.20
-HLT
-
-─────────────────────────────────────────────────────────────────────────
-EXAMPLE 11: Type Conversion Demo
-─────────────────────────────────────────────────────────────────────────
-: Number to string
-SET 0.123.45
-FTS 1.0
-PRT "Float as string: "
-SGET 1
-ENDL
-
-: String to number
-SSET 2.999.99
-STF 2.3
-PRT "String as float: "
-GET 3
-ENDL
-
-: ASCII to character
-SET 4.72
-SET 5.105
-CHR 4.6
-CHR 5.7
-PRT "Characters: "
-SGET 6
-SGET 7
-ENDL
-HLT
 
 ═══════════════════════════════════════════════════════════════════════════
-[20] TIPS & BEST PRACTICES
+[21] TIPS & BEST PRACTICES
 ═══════════════════════════════════════════════════════════════════════════
 
-1. Memory Management:
-   - Use addresses 0-99 for temporary variables
-   - Use 100-999 for arrays/large data
-   - Reserve specific ranges for different purposes
+1. Variable Naming:
+   - Use descriptive names: counter, playerName, highScore
+   - Avoid single letters except for loops: i, j, x, y
+   - CamelCase or snake_case both work
 
-2. Function Organization:
-   - Put all LBL definitions at the end of file
-   - ALWAYS end functions with RET
-   - Use CALL at the start, then HLT before first LBL
-   - NEVER use JMP to call functions - use CALL only
+2. Memory Management:
+   - Named variables: unlimited, auto-managed
+   - Numbered addresses: use 0-1023 for legacy code or arrays
+   - Functions get fresh local scope each call
 
-3. Code Structure (CORRECT):
-   CALL main
-   HLT
-   
-   LBL main
-       : your code here
-   RET
-   
-   LBL other_function
-       : ...
-   RET
+3. Function Design:
+   - Use parameters instead of global variables when possible
+   - Keep functions small and focused
+   - Always end with RET
+   - Use descriptive function names
 
-4. Jump Rules (IMPORTANT):
-   - JMP, JZ, JNZ → Can ONLY jump to LINE NUMBERS
-   - CALL → Can ONLY call LABEL NAMES
-   - IF* commands → Can jump to BOTH line numbers AND labels
-   - Every LBL MUST end with RET
+4. Scope Best Practices:
+   - Declare globals at top of main code
+   - Use locals inside functions for temporary data
+   - Pass data via parameters, not globals
 
-5. Error Prevention:
-   - Always check division by zero before DIV
-   - Validate user input with conditional jumps
-   - Clear memory before reusing addresses
-   - Never forget RET at end of LBL blocks
-
-6. Performance:
-   - Use range operations (SETM, CLRM) for bulk changes
-   - Minimize file operations in loops
-   - Use functions to avoid code duplication
-
-7. Debugging:
-   - Use DUMP to inspect memory state
-   - Use SDUMP to inspect string memory
-   - Add PRTL messages to trace execution flow
-   - Use PAS to pause at critical points
-
-8. File Operations:
-   - Always check if file operations succeed
-   - Use WA mode to write dynamic content
-   - Close files properly by ending program or using new OPEN
-
-9. String Handling:
-   - Remember string memory is separate from float memory
-   - Use CHR for character manipulation
-   - Use STF/FTS for conversions between types
-
-10. Common Mistakes to Avoid:
-    - Using JMP to call functions (use CALL instead)
-    - Forgetting RET at end of LBL
-    - Trying to JMP to a label (use line numbers or IF* commands)
-    - Trying to CALL a line number (use label names only)
+5. Type Safety:
+   - fl parameters: for numbers
+   - str parameters: for text
+   - Use CHR, STF, FTS for conversions
 
 ═══════════════════════════════════════════════════════════════════════════
 
-For more info and updates, visit: [your website/repo]
-Report bugs: [your contact]
+Version: v0.3.1-functions
+New Features: Named variables, Function parameters, True function calls
+Compiler: g++ with -std=c++17
 
 ═══════════════════════════════════════════════════════════════════════════
